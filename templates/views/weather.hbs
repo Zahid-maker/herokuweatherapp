@@ -1,0 +1,125 @@
+{{>header}}
+
+<body>
+    {{>navbar}}
+
+    <!-- main header -->
+
+    <div class="container-fluid main_header">
+        <div class="row">
+            <div class="col-md-10 col-12 mx-auto">
+                <div class="main_content">
+                    <form class="temp_form">
+                        <input type='text' id="cityName" placeholder="Enter your city name" autocomplete="off">
+                        <input type='submit' value='search' id='submitBtn'>
+
+                    </form>
+                </div>
+                <div class="tempInfo">
+                    <div class="top_layer">
+                        {{!-- <p id="current_time" style="font-size: large;"></p> --}}
+                        <p id="day" style="font-size: large;"></p>
+                        ><p id='today_data' style="font-size:large;"></p>
+
+                    </div>
+                    <div class="main_layer">
+                        <p id="city_name">Get Data here</p>
+                        <div class="middle_layer data_hide">
+                            <p id="temp"><span id='temp_real_val'></span><sup id="sup">o</sup>C</p>
+                            <p id="temp_status"><i class="fa fa-cloud" aria-hidden="true"></i></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="foot">
+        <p>Created with ❤ by Zahid Ansari </p>
+    </footer>
+
+
+    <script>
+        const submitBtn = document.getElementById('submitBtn');
+        const city_name = document.getElementById('city_name');
+        const cityName = document.getElementById('cityName');
+        const temp = document.getElementById('temp')
+        const temp_status = document.getElementById('temp_status');
+        const day = document.getElementById('day');
+        const todayDate = document.getElementById('today_data');
+        const datahide = document.querySelector('.middle_layer');
+        const temp_real_val = document.getElementById('temp_real_val');
+
+
+        const getInfo = async (event) => {
+            event.preventDefault();
+            let cityVal = cityName.value;
+            if (cityVal === "") {
+
+                city_name.innerText = "Plz write the city name before search";
+                datahide.classList.add('data_hide');
+            }
+            else {
+                //
+                try {
+
+                    const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityVal}&units=metric&appid=ed7e99aef0fe88c1a5aa5f34cb04e4d6`
+
+                    const response = await fetch(url);
+
+                    let data = await response.json();
+                    const arrData = [data];
+
+                    city_name.innerText = `${arrData[0].name},${arrData[0].sys.country}`;
+
+                    temp_real_val.innerText = arrData[0].main.temp;
+                    const tmpMood = arrData[0].weather[0].main;
+                    console.log(tmpMood)
+                    if (tmpMood === "Clear") {
+                        temp_status.innerHTML = "<i class= 'fas fa-sun' style = 'color:#eccc68;'></i>";
+                    }
+                    else if (tmpMood === "Clouds") {
+                        temp_status.innerHTML = "<i class= 'fas fa-cloud' style = 'color:#f1f2f6;'></i>";
+                    }
+                    else if (tmpMood === "Rain") {
+                        temp_status.innerHTML = "<i class= 'fas fa-cloud-rain' style = 'color:#a4b0be;'></i>";
+                    }
+                    else {
+                        temp_status.innerHTML = "<i class = 'fas fa-cloud-sun-rain'  style = 'color:#a4b0be;'></i>";
+                    }
+                    /* Date and day ,year */
+                    let weekDay = [
+                        'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thrusday', 'Friday', 'Saturday', 'Sunday'
+                    ];
+                    let months = [
+                        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
+                    ];
+                    const currTime = new Date();
+                    let today = weekDay[currTime.getDay()];
+                    let month = months[currTime.getMonth()];
+                    let year = currTime.getFullYear();
+                    let date = currTime.getUTCDate();
+                    day.innerText = today;
+                    todayDate.innerText = `${date}  ${month}  ${year}`;
+                    let period = "AM";
+
+                    datahide.classList.remove('data_hide');
+                }
+                catch {
+                    city_name.innerText = "Plz enter the city name properly";
+                    datahide.classList.add('data_hide');
+
+                }
+
+
+
+            }
+        }
+        submitBtn.addEventListener('click', getInfo);
+
+    </script>
+
+</body>
+
+</html>
