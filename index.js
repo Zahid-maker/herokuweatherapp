@@ -14,7 +14,7 @@ app.set('views',path.join(__dirname,"/templates/views"));
 
 hbs.registerPartials(path.join(__dirname,"/templates/partials"));
 
-app.get('/',(req,res)=>{
+app.get('',(req,res)=>{
     res.render("index.hbs");
 });
 
@@ -31,6 +31,6 @@ res.render("404error",{
 });
 });
 
-app.listen(port,(req,res)=>{
+app.listen(port,()=>{
     console.log("connected!");
 });
